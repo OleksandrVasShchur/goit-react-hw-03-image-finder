@@ -1,0 +1,11 @@
+.button_load {
+  background-color:  #1f2b6f;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-size: 20px;
+  margin: 20px auto;
+  padding: 15px;
+}

@@ -1,0 +1,12 @@
+.App {
+    grid-gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-bottom: 24px;
+}
+
+.message {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
