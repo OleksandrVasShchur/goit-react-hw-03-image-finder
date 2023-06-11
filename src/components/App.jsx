@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
-import {toast, ToastContainer } from 'react-toastify';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Searchbar from './Searchbar/Searchbarl';
-import { getImages } from './GetImages/GetImages';
+import { getImages } from 'GetImages/GetImages';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
-import { isVisible } from '@testing-library/user-event/dist/utils';
 import Modal from './Modal/Modal';
-import css from './App.module.css'
+import css from './App.module.css';
 import Loader from './Loader/Loader';
 export class App extends Component {
   state = {
     images: [],
     query: '',
     page: 1,
+    tags: '',
     isLoading: false,
-    isVisible: false,
     error: null,
     showModal: false,
     currentImageUrl: null,
+    total: 0,
   };
 
   componentDidUpdate(_, prevState) {
@@ -46,7 +46,6 @@ export class App extends Component {
       this.setState(prevState => ({
         images: [...prevState.images, ...hits],
         total: totalHits,
-        isVisible: this.state.page < Math.ceil(totalHits / 12),
       }));
     } catch (error) {
       this.setState({ error: error.message });
@@ -71,26 +70,33 @@ export class App extends Component {
     });
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
+  closeModal = () => {
+    this.setState({
+      showModal: false,
+      currentImageUrl: null,
+      tags: '',
+    });
   };
 
   render() {
-    const { images, error, isLoading, showModal, currentImageUrl } = this.state;
+    const { images, error, isLoading, showModal, currentImageUrl, total } =
+      this.state;
+    const totalPages = total / images.length;
 
     return (
       <section className={css.App}>
         <Searchbar onSubmit={this.onHandlSubmit} />
-        {isLoading && < Loader/>}
-        {isLoading && < Loader/> && <div>Loading...</div>}
-        {images.length === 0 && <p className={css.message}>Please enter your search details...</p>}
+        {isLoading && <Loader />}
+        {images.length === 0 && (
+          <p className={css.message}>Please enter your search details...</p>
+        )}
         {error && <p>Something went wrong </p>}
 
-        {images && <ImageGallery images={images} openModal={this.openModal} />}
+        {images.length > 0 && (
+          <ImageGallery images={images} openModal={this.openModal} />
+        )}
 
-        {isVisible && images.length > 0 && (
+        {totalPages > 1 && !isLoading && images.length > 0 && (
           <Button onClick={this.onLoadMore} disabled={isLoading} />
         )}
 
@@ -98,7 +104,7 @@ export class App extends Component {
           <Modal
             src={currentImageUrl}
             describ={'largePicture'}
-            onCloseModal={this.toggleModal}
+            onCloseModal={this.closeModal}
           />
         )}
 
